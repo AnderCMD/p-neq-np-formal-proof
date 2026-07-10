@@ -1,16 +1,11 @@
 name: Lean 4 · Type-Check & Build
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Trigger on every push (all branches) and every pull-request targeting main.
-# ──────────────────────────────────────────────────────────────────────────────
 on:
   push:
     branches: ["**"]
   pull_request:
     branches: [main]
 
-# Cancel any in-flight run for the same ref so a rapid series of pushes only
-# consumes one runner slot at a time.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,36 +19,39 @@ jobs:
       fail-fast: true
       matrix:
         lean:
-          # Keep this in sync with lean-toolchain.
           - "v4.15.0"
 
     steps:
-      # ── 1. Checkout ────────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Install elan (Lean version manager) ─────────────────────────────
+      # Set auto-config to false to intercept the missing lake-manifest.json crash
       - name: Install elan
         uses: leanprover/lean-action@v1
         with:
-          # Let lean-action read lean-toolchain automatically.
-          auto-config: true
+          auto-config: false
           use-github-cache: true
-          use-mathlib-cache: true
+          use-mathlib-cache: false
 
-      # ── 3. Restore / populate the Mathlib build cache ──────────────────────
-      # `lake exe cache get` downloads pre-built .olean artefacts from the
-      # Mathlib CDN, cutting the CI wall-clock time from ~1 h to ~5 min.
+      # Generates the lockfile dynamically inside the cloud container
+      - name: Generate Lake Manifest
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake update
+
+      # Downloads pre-built binaries to drop build time from 1h to 5min
       - name: Fetch Mathlib cache
-        run: lake exe cache get
-        # A cache miss is non-fatal — Lake will rebuild from source.
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
         continue-on-error: true
 
-      # ── 4. Build the project (full elaboration + type-checking) ────────────
       - name: Build ComplexitySeparation
-        run: lake build
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake build
 
-      # ── 5. Verify that no `sorry` placeholders survive in the source tree ───
+      # Gatekeeper step to enforce complete proofs before merging
       - name: Check for sorry-free proofs
         run: |
           if grep -rn "sorry" ComplexitySeparation/ ComplexitySeparation.lean; then
@@ -62,7 +60,6 @@ jobs:
           fi
           echo "✅ No sorry found — all proofs are complete."
 
-      # ── 6. (Optional) Surface the Lake build log as a GitHub step summary ──
       - name: Post build summary
         if: always()
         run: |
