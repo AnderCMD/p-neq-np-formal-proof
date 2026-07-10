@@ -30,7 +30,7 @@ jobs:
         uses: leanprover/lean-action@v1
         with:
           auto-config: false
-          use-github-cache: true
+          use-github-cache: false
           use-mathlib-cache: false
 
       # Generates the lockfile dynamically inside the cloud container
