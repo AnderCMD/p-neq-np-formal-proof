@@ -3,7 +3,7 @@
 > **A constructive, sorry-free separation of polynomial and exponential growth
 > in the discrete domain of natural numbers, verified with Mathlib.**
 
-[![Lean 4 Build](https://github.com/YOUR_USERNAME/p-neq-np-formal-proof/actions/workflows/lean.yml/badge.svg)](https://github.com/YOUR_USERNAME/p-neq-np-formal-proof/actions/workflows/lean.yml)
+[![Lean 4 Build](https://github.com/AnderCMD/p-neq-np-formal-proof/actions/workflows/lean.yml/badge.svg)](https://github.com/AnderCMD/p-neq-np-formal-proof/actions/workflows/lean.yml)
 [![Mathlib](https://img.shields.io/badge/mathlib-v4.15.0-blue)](https://github.com/leanprover-community/mathlib4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -36,18 +36,18 @@ $$\forall k \in \mathbb{N},\ \exists N \in \mathbb{N},\ \forall n \geq N :\ n^k 
 
 Lifted to the language of machine models, this yields a **discrete separation**:
 beyond a computable threshold, the configuration state-space of any
-polynomial-time deterministic machine is *strictly smaller* than the critical
+polynomial-time deterministic machine is _strictly smaller_ than the critical
 SAT phase-transition space, providing a rigorous lower-bound witness for the
 P ≠ NP separation.
 
 ### Design philosophy
 
-| Choice | Rationale |
-|--------|-----------|
-| **Natural numbers only** | Avoids all real-analytic, topological, or sheaf-theoretic machinery. Every proof is a sequence of `Nat` lemmas. |
-| **Constructive witnesses** | Every threshold `N` is computed explicitly — no classical non-constructive existence arguments. |
-| **Zero `sorry`** | The CI pipeline enforces this on every commit with a `grep` guard. |
-| **Modular Lake layout** | Clean separation between data structures (`Basic`) and proof obligations (`Separation`) to support independent extension. |
+| Choice                     | Rationale                                                                                                                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Natural numbers only**   | Avoids all real-analytic, topological, or sheaf-theoretic machinery. Every proof is a sequence of `Nat` lemmas.           |
+| **Constructive witnesses** | Every threshold `N` is computed explicitly — no classical non-constructive existence arguments.                           |
+| **Zero `sorry`**           | The CI pipeline enforces this on every commit with a `grep` guard.                                                        |
+| **Modular Lake layout**    | Clean separation between data structures (`Basic`) and proof obligations (`Separation`) to support independent extension. |
 
 ---
 
@@ -69,7 +69,7 @@ SATSpaceDiscrete n
   structure_bound : critical_states = 2^n         ← exact exponential
 ```
 
-These are *data* (not propositions), which means future work can *instantiate*
+These are _data_ (not propositions), which means future work can _instantiate_
 them from Mathlib's operational-semantic Turing machine types
 (`Turing.TM1`, `Turing.TM2`) by providing a proof that the step-count
 satisfies the appropriate bound.
@@ -80,7 +80,7 @@ satisfies the appropriate bound.
 nat_gt_id : ∀ n : ℕ, n < 2^n
 ```
 
-Proved by induction.  This lemma is the engine of the multiplicative
+Proved by induction. This lemma is the engine of the multiplicative
 step in the main theorem.
 
 ### Layer 3 — Core theorem
@@ -89,15 +89,16 @@ step in the main theorem.
 nat_exp_dominates_poly_final : ∀ k : ℕ, ∃ N : ℕ, ∀ n ≥ N, n^k < 2^n
 ```
 
-Proved by induction on `k`.  The **inductive step** chains:
+Proved by induction on `k`. The **inductive step** chains:
 
 $$n^{k+1} = n \cdot n^k < n \cdot 2^n < 2^n \cdot 2^n = 2^{2n} \leq 2^{n+1}$$
 
 where:
-- First `<` uses the induction hypothesis.  
-- Second `<` uses `nat_gt_id`.  
+
+- First `<` uses the induction hypothesis.
+- Second `<` uses `nat_gt_id`.
 - The final `≤` uses `n ≥ N_{\mathrm{prev}} + 4 \Rightarrow n \geq 1$,
-  so $n + n \geq n + 1`.
+so $n + n \geq n + 1`.
 
 ### Layer 4 — Separation corollary
 
@@ -139,16 +140,16 @@ p-neq-np-formal-proof/
 
 ### Prerequisites
 
-| Tool | Purpose | Install |
-|------|---------|---------|
+| Tool     | Purpose              | Install                                                                                 |
+| -------- | -------------------- | --------------------------------------------------------------------------------------- |
 | **elan** | Lean version manager | `curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \| sh` |
-| **Git** | Clone & CI | system package manager |
-| **curl** | Mathlib cache fetch | usually pre-installed |
+| **Git**  | Clone & CI           | system package manager                                                                  |
+| **curl** | Mathlib cache fetch  | usually pre-installed                                                                   |
 
 After installing elan, clone the repo:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/p-neq-np-formal-proof.git
+git clone https://github.com/AnderCMD/p-neq-np-formal-proof.git
 cd p-neq-np-formal-proof
 ```
 
@@ -175,7 +176,7 @@ lake build
 ```
 
 A successful build produces no output other than optional progress lines and
-exits with code `0`.  All four modules —
+exits with code `0`. All four modules —
 `ComplexitySeparation`, `ComplexitySeparation.Basic`,
 `ComplexitySeparation.Separation` — will be elaborated and type-checked.
 
@@ -195,18 +196,18 @@ fi
 
 ### `ComplexitySeparation.Basic`
 
-| Declaration | Kind | Description |
-|-------------|------|-------------|
+| Declaration             | Kind        | Description                                            |
+| ----------------------- | ----------- | ------------------------------------------------------ |
 | `DeterministicHardware` | `structure` | Polynomial state-space model parameterised by `n`, `k` |
-| `SATSpaceDiscrete` | `structure` | Exact exponential SAT state-space for input length `n` |
+| `SATSpaceDiscrete`      | `structure` | Exact exponential SAT state-space for input length `n` |
 
 ### `ComplexitySeparation.Separation`
 
-| Declaration | Kind | Description |
-|-------------|------|-------------|
-| `nat_gt_id` | `lemma` | `∀ n : ℕ, n < 2^n` |
-| `nat_exp_dominates_poly_final` | `theorem` | `∀ k, ∃ N, ∀ n ≥ N, n^k < 2^n` |
-| `poly_exp_separation` | `theorem` | Hardware state count < SAT state count beyond threshold |
+| Declaration                    | Kind      | Description                                             |
+| ------------------------------ | --------- | ------------------------------------------------------- |
+| `nat_gt_id`                    | `lemma`   | `∀ n : ℕ, n < 2^n`                                      |
+| `nat_exp_dominates_poly_final` | `theorem` | `∀ k, ∃ N, ∀ n ≥ N, n^k < 2^n`                          |
+| `poly_exp_separation`          | `theorem` | Hardware state count < SAT state count beyond threshold |
 
 ---
 
@@ -219,8 +220,9 @@ on every CI run.
 
 $$\forall n \in \mathbb{N},\quad n < 2^n$$
 
-*Proof:* Induction on `n`.
-- Base: $0 < 2^0 = 1$. ✓  
+_Proof:_ Induction on `n`.
+
+- Base: $0 < 2^0 = 1$. ✓
 - Step: $2^{n+1} = 2 \cdot 2^n > 2n > n + 1$ for $n \geq 1$ (by IH + `linarith`). ✓
 
 ---
@@ -229,9 +231,10 @@ $$\forall n \in \mathbb{N},\quad n < 2^n$$
 
 $$\forall k \in \mathbb{N},\quad \exists N \in \mathbb{N},\quad \forall n \geq N,\quad n^k < 2^n$$
 
-*Proof:* Induction on `k`.
-- **Base** (`k = 0`): $N = 1$. $n^0 = 1 < 2 \leq 2^n$ for $n \geq 1$.  
-- **Step** (`k → k+1`): Take $N = N_{\text{prev}} + 4$.  For $n \geq N$:
+_Proof:_ Induction on `k`.
+
+- **Base** (`k = 0`): $N = 1$. $n^0 = 1 < 2 \leq 2^n$ for $n \geq 1$.
+- **Step** (`k → k+1`): Take $N = N_{\text{prev}} + 4$. For $n \geq N$:
 
 $$n^{k+1} = n \cdot n^k \underset{\text{IH}}{<} n \cdot 2^n \underset{\text{nat\_gt\_id}}{<} 2^n \cdot 2^n = 2^{2n} \leq 2^{n+1}$$
 
@@ -241,10 +244,12 @@ The last inequality holds because $n \geq 5 \Rightarrow 2n \geq n+1$.
 
 ### `poly_exp_separation`
 
-$$\forall k \in \mathbb{N},\quad \exists N,\quad \forall n \geq N,\quad
-\texttt{hw.allocated\_states} < \texttt{sat.critical\_states}$$
+$$
+\forall k \in \mathbb{N},\quad \exists N,\quad \forall n \geq N,\quad
+\texttt{hw.allocated\_states} < \texttt{sat.critical\_states}
+$$
 
-*Proof:* Chain `hw.hardware_bound`, `nat_exp_dominates_poly_final`, and
+_Proof:_ Chain `hw.hardware_bound`, `nat_exp_dominates_poly_final`, and
 `sat.structure_bound.symm`.
 
 ---
@@ -294,7 +299,7 @@ Mathlib Turing machine.
 
 ## Contributing
 
-Contributions welcome!  Please:
+Contributions welcome! Please:
 
 1. Fork the repository and create a feature branch.
 2. Run `lake build` and the sorry-check locally before opening a PR.
@@ -310,7 +315,7 @@ MIT — see [LICENSE](LICENSE).
 
 ---
 
-> *"The question of whether P equals NP is one of the great open problems in
+> _"The question of whether P equals NP is one of the great open problems in
 > mathematics. This repository is a formal scaffolding — not a claimed
 > resolution — demonstrating that the key asymptotic inequality can be given
-> a fully machine-verified, sorry-free proof in Lean 4."*
+> a fully machine-verified, sorry-free proof in Lean 4."_
