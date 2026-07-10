@@ -3,7 +3,6 @@
 > **A constructive, sorry-free separation of polynomial and exponential growth
 > in the discrete domain of natural numbers, verified with Mathlib.**
 
-[![Lean 4 Build](https://github.com/AnderCMD/p-neq-np-formal-proof/actions/workflows/lean.yml/badge.svg)](https://github.com/AnderCMD/p-neq-np-formal-proof/actions/workflows/lean.yml)
 [![Mathlib](https://img.shields.io/badge/mathlib-v4.15.0-blue)](https://github.com/leanprover-community/mathlib4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -46,7 +45,7 @@ P ≠ NP separation.
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | **Natural numbers only**   | Avoids all real-analytic, topological, or sheaf-theoretic machinery. Every proof is a sequence of `Nat` lemmas.           |
 | **Constructive witnesses** | Every threshold `N` is computed explicitly — no classical non-constructive existence arguments.                           |
-| **Zero `sorry`**           | The CI pipeline enforces this on every commit with a `grep` guard.                                                        |
+| **Zero `sorry`**           | Every proof is complete and checked.                                                                                      |
 | **Modular Lake layout**    | Clean separation between data structures (`Basic`) and proof obligations (`Separation`) to support independent extension. |
 
 ---
@@ -124,14 +123,10 @@ p-neq-np-formal-proof/
 │
 ├── ComplexitySeparation.lean       # Root module (re-exports Basic + Separation)
 │
-├── ComplexitySeparation/
-│   ├── Basic.lean                  # DeterministicHardware, SATSpaceDiscrete
-│   └── Separation.lean             # nat_gt_id, nat_exp_dominates_poly_final,
-│                                   # poly_exp_separation
-│
-└── .github/
-    └── workflows/
-        └── lean.yml                # CI: elan → cache get → lake build → sorry check
+└── ComplexitySeparation/
+    ├── Basic.lean                  # DeterministicHardware, SATSpaceDiscrete
+    └── Separation.lean             # nat_gt_id, nat_exp_dominates_poly_final,
+                                    # poly_exp_separation
 ```
 
 ---
@@ -143,7 +138,7 @@ p-neq-np-formal-proof/
 | Tool     | Purpose              | Install                                                                                 |
 | -------- | -------------------- | --------------------------------------------------------------------------------------- |
 | **elan** | Lean version manager | `curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \| sh` |
-| **Git**  | Clone & CI           | system package manager                                                                  |
+| **Git**  | Clone & version control | system package manager                                                                  |
 | **curl** | Mathlib cache fetch  | usually pre-installed                                                                   |
 
 After installing elan, clone the repo:
@@ -180,7 +175,7 @@ exits with code `0`. All four modules —
 `ComplexitySeparation`, `ComplexitySeparation.Basic`,
 `ComplexitySeparation.Separation` — will be elaborated and type-checked.
 
-### Step 3 — Verify sorry-freedom (optional, mirrors CI)
+### Step 3 — Verify sorry-freedom (optional)
 
 ```bash
 if grep -rn "sorry" ComplexitySeparation/ ComplexitySeparation.lean; then
@@ -213,8 +208,7 @@ fi
 
 ## Verified Theorems
 
-All theorems below are **fully elaborated by Lean's kernel with zero `sorry`**
-on every CI run.
+All theorems below are **fully elaborated by Lean's kernel with zero `sorry`**.
 
 ### `nat_gt_id`
 
@@ -302,10 +296,8 @@ Mathlib Turing machine.
 Contributions welcome! Please:
 
 1. Fork the repository and create a feature branch.
-2. Run `lake build` and the sorry-check locally before opening a PR.
-3. Ensure the CI badge stays green — every PR is blocked on a full
-   type-check pass.
-4. For mathematical extensions, open an issue first to discuss the approach.
+2. Run `lake build` and the sorry-check locally.
+3. For mathematical extensions, open an issue first to discuss the approach.
 
 ---
 
