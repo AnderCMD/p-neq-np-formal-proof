@@ -4,7 +4,7 @@
 > in the discrete domain of natural numbers, verified with Mathlib.**
 
 [![Mathlib](https://img.shields.io/badge/mathlib-v4.15.0-blue)](https://github.com/leanprover-community/mathlib4)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
 ---
 
@@ -303,7 +303,7 @@ Contributions welcome! Please:
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Apache 2.0 — see [LICENSE](LICENSE).
 
 ---
 
